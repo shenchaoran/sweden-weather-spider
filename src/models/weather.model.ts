@@ -6,6 +6,7 @@ const schema = new Schema({
     geonameid: Number,
     approvedTime: String,
     referenceTime: String,
+    timeSeries: Schema.Types.Mixed,
     _value: Schema.Types.Mixed,
 }, { collection: collectionName });
 
@@ -22,5 +23,6 @@ export interface IWeatherDocument extends Document {
     geonameid: Number;
     approvedTime: String;
     referenceTime: String;
+    timeSeries: [];
     _value: Schema.Types.Mixed;
 }
