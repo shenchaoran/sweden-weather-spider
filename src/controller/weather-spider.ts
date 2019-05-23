@@ -34,6 +34,10 @@ export default class WeatherSpider {
             })
     }
 
+    async getSitesBy() {
+        
+    }
+
     async getAllSitesWeather() {
         this.sites = await SiteModel.find()
         return Bluebird.map(this.sites, async site => {
@@ -60,6 +64,7 @@ export default class WeatherSpider {
             const list = []
             const days = _.get(doc, '_value.daySerie')
             const referTime = addHours(new Date(doc.referenceTime), -8)
+            const approvedTime = addHours(new Date(doc.approvedTime), -6)
             days.map(dayData => {
                 dayData.data.map(hourData => {
                     // hourData.localDate = hourData.localDate.replace(/Z$/, '+01:00')
@@ -79,6 +84,7 @@ export default class WeatherSpider {
                     //     weather = '多云'
                     // }
                     list.push({
+                        'update time': format(approvedTime, 'YYYY-MM-DD HH:mm:ss'),
                         year: getYear(localtime),
                         month: getMonth(localtime) + 1,
                         day: getDate(localtime),
@@ -102,7 +108,7 @@ export default class WeatherSpider {
                 referenceTime: doc.referenceTime,
             }, doc, { upsert: true })
                 .then(v => {
-                    const fname = `${_.get(res, 'place.place')}-updated-at-${format(referTime, 'YYYY-MM-DD-HH-mm-ss')}.csv`
+                    const fname = `${_.get(res, 'place.place')}-updated-at-${format(approvedTime, 'YYYY-MM-DD-HH-mm-ss')}.csv`
                     let csv = Papa.unparse(list as any, {
                         skipEmptyLines: true
                     } as any)
